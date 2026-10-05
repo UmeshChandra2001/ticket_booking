@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SkyWings · Flight Ticket Booking</title>
+  <!-- Google Font & Font Awesome -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at 25% 20%, #1a2332, #0a0f18);
+      background-attachment: fixed;
+      padding: 1.5rem;
+    }
+
+    /* Main card – elegant glassmorphism with sky-blue and gold accents */
+    .flight-booking-card {
+      max-width: 1250px;
+      width: 100%;
+      background: rgba(14, 20, 32, 0.82);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(100, 180, 255, 0.12);
+      box-shadow: 0 35px 65px -18px rgba(0, 0, 0, 0.95), 0 0 0 1px rgba(100, 180, 255, 0.08) inset;
+      border-radius: 2.8rem;
+      padding: 2.2rem 2.5rem;
+      color: #f0f5ff;
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2.4rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .header h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: linear-gradient(145deg, #ffffff, #a8d0ff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .header h1 i {
+      color: #5fa8ff;
+      font-size: 2.1rem;
+      filter: drop-shadow(0 0 12px rgba(95, 168, 255, 0.6));
+    }
+
+    .header .flight-badge {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(95, 168, 255, 0.35);
+      padding: 0.7rem 1.5rem;
+      border-radius: 100px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: #eef3fc;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      backdrop-filter: blur(4px);
+    }
+
+    .header .flight-badge i {
+      color: #5fa8ff;
+    }
+
+    /* Two-column layout */
+    .booking-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.15fr;
+      gap: 2rem;
+      align-items: start;
+    }
+
+    /* LEFT PANEL */
+    .left-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 1.8rem;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #bfcbe0;
+      margin-bottom: 0.9rem;
+    }
+
+    .section-title i {
+      color: #5fa8ff;
+      font-size: 1.1rem;
+    }
+
+    /* Flight cards */
+    .flight-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .flight-item {
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 1.6rem;
+      padding: 0.9rem 1.3rem;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      backdrop-filter: blur(4px);
+    }
+
+    .flight-item:hover {
+      background: rgba(255, 255, 255, 0.07);
+      border-color: rgba(95, 168, 255, 0.45);
+      transform: scale(1.005);
+    }
+
+    .flight-item.selected {
+      background: rgba(95, 168, 255, 0.12);
+      border: 1px solid #5fa8ff;
+      box-shadow: 0 0 22px rgba(95, 168, 255, 0.2);
+    }
+
+    .flight-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 1.2rem;
+      background: linear-gradient(145deg, #1a2a3f, #101b2b);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      color: #5fa8ff;
+      box-shadow: 0 10px 18px rgba(0, 0, 0, 0.5);
+    }
+
+    .flight-info h3 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 0.25rem;
+    }
+
+    .flight-info .meta {
+      font-size: 0.82rem;
+      color: #9aa9c4;
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .flight-info .meta i {
+      font-size: 0.7rem;
+      margin-right: 5px;
+      color: #5fa8ff;
+    }
+
+    /* Cabin class options */
+    .class-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+    }
+
+    .class-chip {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.13);
+      border-radius: 40px;
+      padding: 0.7rem 1.4rem;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: #dfe9ff;
+      transition: 0.2s;
+      cursor: pointer;
+      backdrop-filter: blur(2px);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .class-chip i {
+      color: #5fa8ff;
+      font-size: 0.85rem;
+    }
+
+    .class-chip:hover {
+      background: rgba(95, 168, 255, 0.15);
+      border-color: #5fa8ff;
+    }
+
+    .class-chip.active {
+      background: #5fa8ff;
+      border-color: #5fa8ff;
+      color: #0b121c;
+      font-weight: 700;
+      box-shadow: 0 8px 18px rgba(95, 168, 255, 0.35);
+    }
+
+    .class-chip.active i {
+      color: #0b121c;
+    }
+
+    /* Passenger options */
+    .passenger-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+    }
+
+    .passenger-chip {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.13);
+      border-radius: 40px;
+      padding: 0.7rem 1.4rem;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: #dfe9ff;
+      transition: 0.2s;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .passenger-chip i {
+      color: #5fa8ff;
+      font-size: 0.85rem;
+    }
+
+    .passenger-chip:hover {
+      background: rgba(95, 168, 255, 0.15);
+      border-color: #5fa8ff;
+    }
+
+    .passenger-chip.active {
+      background: #5fa8ff;
+      border-color: #5fa8ff;
+      color: #0b121c;
+      font-weight: 700;
+      box-shadow: 0 8px 18px rgba(95, 168, 255, 0.35);
+    }
+
+    .passenger-chip.active i {
+      color: #0b121c;
+    }
+
+    /* RIGHT PANEL – Seats */
+    .right-panel {
+      background: rgba(8, 12, 20, 0.68);
+      border-radius: 2rem;
+      padding: 1.8rem 1.8rem;
+      border: 1px solid rgba(95, 168, 255, 0.1);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 20px 35px -8px rgba(0, 0, 0, 0.7);
+    }
+
+    /* Aircraft layout indicator */
+    .aircraft-layout {
+      text-align: center;
+      margin-bottom: 1.4rem;
+    }
+
+    .aircraft-label {
+      font-size: 0.8rem;
+      letter-spacing: 4px;
+      color: #9aa9c4;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    .aircraft-name {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #5fa8ff;
+      letter-spacing: 1px;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .aircraft-name i {
+      font-size: 1.3rem;
+    }
+
+    /* Seat grid – aircraft layout: 3 + aisle + 3 (typical narrow-body) */
+    .seat-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 0.5rem;
+      justify-content: center;
+      margin: 1.6rem 0 1.5rem;
+    }
+
+    .seat {
+      aspect-ratio: 1/1;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 10px 10px 6px 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.6rem;
+      font-weight: 600;
+      color: #b7c7e0;
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      transition: 0.15s ease;
+      cursor: pointer;
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.4);
+      position: relative;
+    }
+
+    /* Aisle (middle column index 3) */
+    .seat.aisle {
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      pointer-events: none;
+      cursor: default;
+      color: transparent;
+    }
+
+    .seat.available:hover {
+      background: rgba(95, 168, 255, 0.3);
+      border-color: #5fa8ff;
+      color: white;
+      transform: scale(1.07);
+    }
+
+    .seat.selected {
+      background: #5fa8ff;
+      border-color: #5fa8ff;
+      color: #0b121c;
+      font-weight: 800;
+      box-shadow: 0 0 16px #5fa8ff;
+    }
+
+    .seat.occupied {
+      background: #1e2634;
+      border-color: #2a3446;
+      color: #4d5a72;
+      cursor: not-allowed;
+      box-shadow: none;
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    /* Window seats (columns 0 and 6) */
+    .seat.window::before {
+      content: '\f111';
+      font-family: 'Font Awesome 6 Free';
+      font-weight: 900;
+      font-size: 0.45rem;
+      color: #7eb8ff;
+      position: absolute;
+      top: 2px;
+      left: 3px;
+      opacity: 0.5;
+    }
+
+    /* Exit row indicator */
+    .seat.exit-row::after {
+      content: 'EXIT';
+      position: absolute;
+      bottom: 1px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.4rem;
+      font-weight: 800;
+      color: #ffb84d;
+      letter-spacing: 0.5px;
+    }
+
+    /* Legend */
+    .legend {
+      display: flex;
+      justify-content: center;
+      gap: 1.6rem;
+      font-size: 0.72rem;
+      color: #b7c7e0;
+      margin-bottom: 1.6rem;
+      flex-wrap: wrap;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .legend-box {
+      width: 16px;
+      height: 16px;
+      border-radius: 5px;
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .legend-box.selected {
+      background: #5fa8ff;
+      border-color: #5fa8ff;
+    }
+
+    .legend-box.occupied {
+      background: #1e2634;
+      border-color: #2a3446;
+    }
+
+    .legend-box.window {
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      position: relative;
+    }
+
+    .legend-box.window::before {
+      content: '\f111';
+      font-family: 'Font Awesome 6 Free';
+      font-weight: 900;
+      font-size: 0.5rem;
+      color: #7eb8ff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .legend-box.exit {
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      position: relative;
+    }
+
+    .legend-box.exit::after {
+      content: 'EXIT';
+      font-size: 0.35rem;
+      font-weight: 800;
+      color: #ffb84d;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Summary */
+    .summary {
+      background: rgba(0, 0, 0, 0.35);
+      border-radius: 1.6rem;
+      padding: 1.4rem 1.6rem;
+      margin-top: 0.8rem;
+      border: 1px solid rgba(95, 168, 255, 0.15);
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.95rem;
+      padding: 0.55rem 0;
+      color: #cdd9f0;
+      border-bottom: 1px dashed rgba(255, 255, 255, 0.08);
+    }
+
+    .summary-row:last-child {
+      border-bottom: none;
+    }
+
+    .summary-row.total {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #5fa8ff;
+      margin-top: 0.4rem;
+      padding-top: 0.9rem;
+      border-top: 1px solid rgba(95, 168, 255, 0.3);
+    }
+
+    .summary-row span:last-child {
+      font-weight: 600;
+    }
+
+    .book-btn {
+      width: 100%;
+      margin-top: 1.6rem;
+      padding: 1.15rem;
+      border: none;
+      border-radius: 3rem;
+      background: linear-gradient(145deg, #5fa8ff, #3d8ae0);
+      color: #0b121c;
+      font-weight: 800;
+      font-size: 1.1rem;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      cursor: pointer;
+      transition: 0.2s ease;
+      box-shadow: 0 18px 30px -8px rgba(95, 168, 255, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .book-btn:hover {
+      transform: translateY(-3px);
+      background: linear-gradient(145deg, #7eb8ff, #5fa8ff);
+      box-shadow: 0 25px 35px -8px #5fa8ff;
+    }
+
+    .book-btn i {
+      font-size: 1.2rem;
+    }
+
+    /* Glow effects */
+    .glow-right {
+      position: fixed;
+      width: 550px;
+      height: 550px;
+      background: radial-gradient(circle, rgba(95, 168, 255, 0.1) 0%, transparent 70%);
+      border-radius: 50%;
+      top: -180px;
+      right: -180px;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .glow-left {
+      position: fixed;
+      width: 650px;
+      height: 650px;
+      background: radial-gradient(circle, rgba(70, 130, 220, 0.08) 0%, transparent 70%);
+      border-radius: 50%;
+      bottom: -240px;
+      left: -200px;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    /* Responsive */
+    @media (max-width: 950px) {
+      .booking-grid {
+        grid-template-columns: 1fr;
+      }
+      .flight-booking-card {
+        padding: 1.8rem;
+      }
+      .header h1 {
+        font-size: 1.9rem;
+      }
+    }
+
+    @media (max-width: 550px) {
+      body {
+        padding: 0.8rem;
+      }
+      .flight-booking-card {
+        padding: 1.3rem;
+      }
+      .seat-grid {
+        gap: 0.35rem;
+        grid-template-columns: repeat(7, 1fr);
+      }
+      .seat {
+        font-size: 0.5rem;
+      }
+      .flight-item {
+        padding: 0.7rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="glow-right"></div>
+  <div class="glow-left"></div>
+
+  <main class="flight-booking-card">
+    <!-- Header -->
+    <div class="header">
+      <h1>
+        <i class="fas fa-plane"></i> SkyWings
+      </h1>
+      <div class="flight-badge">
+        <i class="fas fa-calendar-check"></i> Wed, 16 Apr · Non-stop
+      </div>
+    </div>
+
+    <!-- Grid -->
+    <div class="booking-grid">
+      <!-- LEFT: Flights, class, passengers -->
+      <div class="left-panel">
+        <!-- Flight selection -->
+        <div>
+          <div class="section-title">
+            <i class="fas fa-route"></i> Available flights
+          </div>
+          <div class="flight-list">
+            <div class="flight-item selected" data-flight="SkyWings 101 · JFK → LHR">
+              <div class="flight-icon"><i class="fas fa-plane-departure"></i></div>
+              <div class="flight-info">
+                <h3>SW 101 · JFK → LHR</h3>
+                <div class="meta">
+                  <span><i class="fas fa-clock"></i> 08:45 – 20:30</span>
+                  <span><i class="fas fa-clock"></i> 7h 45m</span>
+                  <span><i class="fas fa-plane"></i> Boeing 787</span>
+                </div>
+              </div>
+            </div>
+            <div class="flight-item" data-flight="SkyWings 204 · JFK → CDG">
+              <div class="flight-icon"><i class="fas fa-plane"></i></div>
+              <div class="flight-info">
+                <h3>SW 204 · JFK → CDG</h3>
+                <div class="meta">
+                  <span><i class="fas fa-clock"></i> 10:15 – 23:40</span>
+                  <span><i class="fas fa-clock"></i> 7h 25m</span>
+                  <span><i class="fas fa-plane"></i> Airbus A350</span>
+                </div>
+              </div>
+            </div>
+            <div class="flight-item" data-flight="SkyWings 318 · EWR → AMS">
+              <div class="flight-icon"><i class="fas fa-plane-arrival"></i></div>
+              <div class="flight-info">
+                <h3>SW 318 · EWR → AMS</h3>
+                <div class="meta">
+                  <span><i class="fas fa-clock"></i> 18:20 – 07:55+1</span>
+                  <span><i class="fas fa-clock"></i> 7h 35m</span>
+                  <span><i class="fas fa-plane"></i> Boeing 777</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cabin class selection -->
+        <div>
+          <div class="section-title">
+            <i class="fas fa-chair"></i> Cabin class
+          </div>
+          <div class="class-options">
+            <div class="class-chip active"><i class="fas fa-crown"></i> First</div>
+            <div class="class-chip"><i class="fas fa-briefcase"></i> Business</div>
+            <div class="class-chip"><i class="fas fa-star"></i> Premium Economy</div>
+            <div class="class-chip"><i class="fas fa-user"></i> Economy</div>
+          </div>
+        </div>
+
+        <!-- Passenger selection -->
+        <div>
+          <div class="section-title">
+            <i class="fas fa-users"></i> Passengers
+          </div>
+          <div class="passenger-options">
+            <div class="passenger-chip active"><i class="fas fa-user"></i> 1 Adult</div>
+            <div class="passenger-chip"><i class="fas fa-user-plus"></i> 2 Adults</div>
+            <div class="passenger-chip"><i class="fas fa-child"></i> 1 Adult + Child</div>
+            <div class="passenger-chip"><i class="fas fa-user-friends"></i> Group (3+)</div>
+          </div>
+        </div>
+
+        <!-- Extra info -->
+        <div style="margin-top: 0.4rem; color: #9aa9c4; font-size: 0.9rem; display: flex; gap: 20px; flex-wrap: wrap;">
+          <span><i class="fas fa-utensils" style="color: #5fa8ff;"></i> Meals included</span>
+          <span><i class="fas fa-wifi" style="color: #5fa8ff;"></i> WiFi onboard</span>
+          <span><i class="fas fa-tv" style="color: #5fa8ff;"></i> Entertainment</span>
+        </div>
+      </div>
+
+      <!-- RIGHT: Seat selection & booking -->
+      <div class="right-panel">
+        <div class="aircraft-layout">
+          <div class="aircraft-label">Aircraft layout</div>
+          <div class="aircraft-name">
+            <i class="fas fa-plane"></i> Boeing 787-9 <i class="fas fa-plane"></i>
+          </div>
+        </div>
+
+        <!-- Seat grid will be populated with JS -->
+        <div class="seat-grid" id="flightSeatGrid"></div>
+
+        <!-- Legend -->
+        <div class="legend">
+          <div class="legend-item"><div class="legend-box"></div> Available</div>
+          <div class="legend-item"><div class="legend-box selected"></div> Selected</div>
+          <div class="legend-item"><div class="legend-box occupied"></div> Occupied</div>
+          <div class="legend-item"><div class="legend-box window"></div> Window</div>
+          <div class="legend-item"><div class="legend-box exit"></div> Exit row</div>
+        </div>
+
+        <!-- Summary -->
+        <div class="summary">
+          <div class="summary-row">
+            <span>Flight</span>
+            <span id="selectedFlight">SkyWings 101 · JFK → LHR</span>
+          </div>
+          <div class="summary-row">
+            <span>Cabin</span>
+            <span id="selectedClass">First</span>
+          </div>
+          <div class="summary-row">
+            <span>Passengers</span>
+            <span id="selectedPassengers">1 Adult</span>
+          </div>
+          <div class="summary-row">
+            <span>Seats</span>
+            <span id="selectedSeats">None</span>
+          </div>
+          <div class="summary-row total">
+            <span>Total</span>
+            <span id="totalPrice">$0.00</span>
+          </div>
+        </div>
+
+        <button class="book-btn" id="bookFlightBtn">
+          <i class="fas fa-ticket-alt"></i> Book flight
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    (function() {
+      // ---------- FLIGHT SEAT CONFIGURATION ----------
+      const rows = 12;          // 12 rows of seats
+      const cols = 7;           // layout: [seat, seat, seat, aisle, seat, seat, seat]
+      // Columns 0,1,2 are left side; column 3 is aisle; columns 4,5,6 are right side
+      
+      const seatGrid = document.getElementById('flightSeatGrid');
+
+      // Occupied seats (simulate) - format "row-col"
+      const occupiedSeats = new Set([
+        '1-0', '1-6', '2-1', '3-5', '4-0', '4-2', '5-4', '5-6', 
+        '6-1', '6-5', '7-0', '7-6', '8-2', '9-1', '9-5', '10-0', 
+        '10-6', '11-1', '11-5', '12-0', '12-2', '12-4'
+      ]);
+
+      // Exit rows (simulate rows 6 and 12)
+      const exitRows = new Set([6, 12]);
+
+      // Selected seats set
+      let selectedSeats = new Set();
+
+      // UI elements
+      const selectedFlightSpan = document.getElementById('selectedFlight');
+      const selectedClassSpan = document.getElementById('selectedClass');
+      const selectedPassengersSpan = document.getElementById('selectedPassengers');
+      const selectedSeatsSpan = document.getElementById('selectedSeats');
+      const totalPriceSpan = document.getElementById('totalPrice');
+
+      // Base price per seat (could depend on class, but for demo flat)
+      const SEAT_PRICE = 350.00;
+
+      // ---------- BUILD FLIGHT SEAT GRID ----------
+      function buildFlightSeats() {
+        seatGrid.innerHTML = '';
+        for (let r = 1; r <= rows; r++) {
+          for (let c = 0; c < cols; c++) {
+            const seat = document.createElement('div');
+            seat.className = 'seat';
+            
+            // aisle column (index 3) -> empty space
+            if (c === 3) {
+              seat.classList.add('aisle');
+              seat.textContent = '';
+              seatGrid.appendChild(seat);
+              continue;
+            }
+
+            const seatId = `${r}-${c}`; // e.g., "1-0"
+            seat.dataset.seatId = seatId;
+            
+            // seat label: row number + letter (A-F)
+            const rowNum = r;
+            const colLetter = String.fromCharCode(65 + c); // A, B, C, D, E, F, G but we skip aisle so D not used
+            // Better: assign letters A,B,C for cols 0,1,2 and D,E,F for cols 4,5,6
+            let seatLetter;
+            if (c === 0) seatLetter = 'A';
+            else if (c === 1) seatLetter = 'B';
+            else if (c === 2) seatLetter = 'C';
+            else if (c === 4) seatLetter = 'D';
+            else if (c === 5) seatLetter = 'E';
+            else if (c === 6) seatLetter = 'F';
+            else seatLetter = '?';
+            
+            seat.textContent = `${rowNum}${seatLetter}`;
+            seat.style.fontSize = '0.6rem';
+            
+            // Check occupied
+            if (occupiedSeats.has(seatId)) {
+              seat.classList.add('occupied');
+            } else {
+              seat.classList.add('available');
+            }
+            
+            // Mark window seats (col 0 and col 6)
+            if (c === 0 || c === 6) {
+              seat.classList.add('window');
+            }
+            
+            // Mark exit row
+            if (exitRows.has(r)) {
+              seat.classList.add('exit-row');
+            }
+            
+            // Add click listener for available seats
+            if (!seat.classList.contains('occupied') && !seat.classList.contains('aisle')) {
+              seat.addEventListener('click', (e) => {
+                e.stopPropagation();
+                toggleFlightSeat(seat, seatId);
+              });
+            }
+            
+            seatGrid.appendChild(seat);
+          }
+        }
+      }
+
+      // Toggle seat selection
+      function toggleFlightSeat(seatElement, seatId) {
+        if (occupiedSeats.has(seatId)) return;
+        
+        if (selectedSeats.has(seatId)) {
+          selectedSeats.delete(seatId);
+          seatElement.classList.remove('selected');
+        } else {
+          if (selectedSeats.size >= 8) {
+            alert('You can select up to 8 seats per booking.');
+            return;
+          }
+          selectedSeats.add(seatId);
+          seatElement.classList.add('selected');
+        }
+        
+        updateFlightSummary();
+      }
+
+      // Update summary
+      function updateFlightSummary() {
+        if (selectedSeats.size === 0) {
+          selectedSeatsSpan.textContent = 'None';
+        } else {
+          const seatList = Array.from(selectedSeats).map(id => {
+            const [r, c] = id.split('-').map(Number);
+            let seatLetter;
+            if (c === 0) seatLetter = 'A';
+            else if (c === 1) seatLetter = 'B';
+            else if (c === 2) seatLetter = 'C';
+            else if (c === 4) seatLetter = 'D';
+            else if (c === 5) seatLetter = 'E';
+            else if (c === 6) seatLetter = 'F';
+            else seatLetter = '?';
+            return `${r}${seatLetter}`;
+          }).sort((a, b) => {
+            // sort by row then letter
+            const rowA = parseInt(a);
+            const rowB = parseInt(b);
+            if (rowA !== rowB) return rowA - rowB;
+            return a.localeCompare(b);
+          });
+          selectedSeatsSpan.textContent = seatList.join(', ');
+        }
+        
+        const total = (selectedSeats.size * SEAT_PRICE).toFixed(2);
+        totalPriceSpan.textContent = `$${total}`;
+      }
+
+      // ---------- FLIGHT SELECTION ----------
+      const flightItems = document.querySelectorAll('.flight-item');
+      flightItems.forEach(item => {
+        item.addEventListener('click', () => {
+          flightItems.forEach(f => f.classList.remove('selected'));
+          item.classList.add('selected');
+          const flightName = item.dataset.flight || item.querySelector('.flight-info h3').textContent;
+          selectedFlightSpan.textContent = flightName;
+        });
+      });
+
+      // ---------- CLASS SELECTION ----------
+      const classChips = document.querySelectorAll('.class-chip');
+      classChips.forEach(chip => {
+        chip.addEventListener('click', () => {
+          classChips.forEach(c => c.classList.remove('active'));
+          chip.classList.add('active');
+          const classText = chip.textContent.trim();
+          selectedClassSpan.textContent = classText;
+        });
+      });
+
+      // ---------- PASSENGER SELECTION ----------
+      const passengerChips = document.querySelectorAll('.passenger-chip');
+      passengerChips.forEach(chip => {
+        chip.addEventListener('click', () => {
+          passengerChips.forEach(c => c.classList.remove('active'));
+          chip.classList.add('active');
+          const passengerText = chip.textContent.trim();
+          selectedPassengersSpan.textContent = passengerText;
+        });
+      });
+
+      // ---------- BOOK BUTTON ----------
+      const bookBtn = document.getElementById('bookFlightBtn');
+      bookBtn.addEventListener('click', () => {
+        if (selectedSeats.size === 0) {
+          alert('Please select at least one seat.');
+          return;
+        }
+        const flight = selectedFlightSpan.textContent;
+        const cabin = selectedClassSpan.textContent;
+        const passengers = selectedPassengersSpan.textContent;
+        const seatCount = selectedSeats.size;
+        const total = totalPriceSpan.textContent;
+        
+        alert(`✈️ Booking Confirmed!\n\nFlight: ${flight}\nCabin: ${cabin}\nPassengers: ${passengers}\nSeats: ${selectedSeatsSpan.textContent}\nTotal: ${total}\n\nHave a great flight!`);
+        
+        // Optional: clear selection after booking
+        // selectedSeats.clear();
+        // document.querySelectorAll('.seat.selected').forEach(s => s.classList.remove('selected'));
+        // updateFlightSummary();
+      });
+
+      // ---------- INITIALIZE ----------
+      buildFlightSeats();
+
+      // Set default flight, class, passengers from UI
+      const defaultFlight = document.querySelector('.flight-item.selected');
+      if (defaultFlight) {
+        selectedFlightSpan.textContent = defaultFlight.dataset.flight || defaultFlight.querySelector('.flight-info h3').textContent;
+      }
+      const defaultClass = document.querySelector('.class-chip.active');
+      if (defaultClass) {
+        selectedClassSpan.textContent = defaultClass.textContent.trim();
+      }
+      const defaultPassengers = document.querySelector('.passenger-chip.active');
+      if (defaultPassengers) {
+        selectedPassengersSpan.textContent = defaultPassengers.textContent.trim();
+      }
+      
+      // Seats empty initially
+      updateFlightSummary();
+    })();
+  </script>
+</body>
+</html>
