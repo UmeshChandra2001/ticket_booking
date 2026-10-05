@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CinemaMax · Movie Ticket Booking</title>
+  <!-- Google Font & Font Awesome for icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at 20% 30%, #1a1e2b, #0b0d14);
+      background-attachment: fixed;
+      padding: 1.5rem;
+    }
+
+    /* Main booking card – glass morphism with excellent backdrop */
+    .booking-card {
+      max-width: 1100px;
+      width: 100%;
+      background: rgba(20, 24, 33, 0.75);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 30px 50px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 215, 0, 0.1) inset;
+      border-radius: 2.5rem;
+      padding: 2rem 2.5rem;
+      transition: all 0.2s ease;
+      color: #f0f3fa;
+    }
+
+    /* Header with title and small tagline */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2.2rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .header h1 {
+      font-size: 2.1rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #ffffff, #ffe9a7);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .header h1 i {
+      color: #f5c542;
+      font-size: 2rem;
+      filter: drop-shadow(0 0 8px rgba(245, 197, 66, 0.5));
+    }
+
+    .header .date-badge {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 215, 0, 0.3);
+      padding: 0.6rem 1.3rem;
+      border-radius: 100px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: #e9eef7;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      backdrop-filter: blur(4px);
+    }
+
+    .header .date-badge i {
+      color: #f5c542;
+    }
+
+    /* Two column layout */
+    .booking-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.1fr;
+      gap: 2rem;
+      align-items: start;
+    }
+
+    /* LEFT SIDE – movie selection & info */
+    .left-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 1.8rem;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #bfc9e0;
+      margin-bottom: 0.8rem;
+    }
+
+    .section-title i {
+      color: #f5c542;
+      font-size: 1.1rem;
+    }
+
+    /* Movie cards */
+    .movie-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.9rem;
+    }
+
+    .movie-item {
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 1.5rem;
+      padding: 0.9rem 1.2rem;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      backdrop-filter: blur(4px);
+    }
+
+    .movie-item:hover {
+      background: rgba(255, 255, 255, 0.07);
+      border-color: rgba(245, 197, 66, 0.4);
+      transform: scale(1.01);
+    }
+
+    .movie-item.selected {
+      background: rgba(245, 197, 66, 0.12);
+      border: 1px solid #f5c542;
+      box-shadow: 0 0 18px rgba(245, 197, 66, 0.2);
+    }
+
+    .movie-poster {
+      width: 55px;
+      height: 55px;
+      border-radius: 1rem;
+      background: linear-gradient(145deg, #2c3142, #1c1f2b);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      color: #f5c542;
+      box-shadow: 0 8px 14px rgba(0, 0, 0, 0.5);
+    }
+
+    .movie-info h3 {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: white;
+      margin-bottom: 0.2rem;
+    }
+
+    .movie-info .meta {
+      font-size: 0.8rem;
+      color: #9aa6c1;
+      display: flex;
+      gap: 12px;
+    }
+
+    .movie-info .meta i {
+      font-size: 0.7rem;
+      margin-right: 3px;
+      color: #f5c542;
+    }
+
+    /* Showtime chips */
+    .showtimes {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.7rem;
+    }
+
+    .time-chip {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 40px;
+      padding: 0.6rem 1.3rem;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: #dfe6f5;
+      transition: 0.2s;
+      cursor: pointer;
+      backdrop-filter: blur(2px);
+    }
+
+    .time-chip i {
+      margin-right: 6px;
+      font-size: 0.8rem;
+      color: #f5c542;
+    }
+
+    .time-chip:hover {
+      background: rgba(245, 197, 66, 0.15);
+      border-color: #f5c542;
+    }
+
+    .time-chip.active {
+      background: #f5c542;
+      border-color: #f5c542;
+      color: #0b0d14;
+      font-weight: 700;
+      box-shadow: 0 8px 18px rgba(245, 197, 66, 0.3);
+    }
+
+    .time-chip.active i {
+      color: #0b0d14;
+    }
+
+    /* RIGHT SIDE – seat selection & summary */
+    .right-panel {
+      background: rgba(12, 15, 22, 0.6);
+      border-radius: 2rem;
+      padding: 1.6rem 1.8rem;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .screen-indicator {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .screen {
+      width: 80%;
+      height: 8px;
+      background: linear-gradient(90deg, transparent, #f5c542, #f5c542, transparent);
+      margin: 0 auto 0.6rem;
+      border-radius: 20px;
+      filter: drop-shadow(0 0 12px #f5c542);
+    }
+
+    .screen-indicator span {
+      font-size: 0.8rem;
+      letter-spacing: 3px;
+      color: #9aa6c1;
+      text-transform: uppercase;
+    }
+
+    /* Seat grid */
+    .seat-grid {
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      gap: 0.6rem;
+      justify-content: center;
+      margin: 1.8rem 0;
+    }
+
+    .seat {
+      aspect-ratio: 1/1;
+      background: rgba(255, 255, 255, 0.07);
+      border-radius: 10px 10px 6px 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: #b7c2da;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      transition: 0.15s ease;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .seat.available:hover {
+      background: rgba(245, 197, 66, 0.3);
+      border-color: #f5c542;
+      color: white;
+      transform: scale(1.05);
+    }
+
+    .seat.selected {
+      background: #f5c542;
+      border-color: #f5c542;
+      color: #0b0d14;
+      font-weight: 700;
+      box-shadow: 0 0 16px #f5c542;
+    }
+
+    .seat.occupied {
+      background: #2f3542;
+      border-color: #3e4555;
+      color: #5a6377;
+      cursor: not-allowed;
+      box-shadow: none;
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    /* Seat legend */
+    .legend {
+      display: flex;
+      justify-content: center;
+      gap: 1.8rem;
+      font-size: 0.75rem;
+      color: #b7c2da;
+      margin-bottom: 1.5rem;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .legend-box {
+      width: 16px;
+      height: 16px;
+      border-radius: 5px;
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .legend-box.selected {
+      background: #f5c542;
+      border-color: #f5c542;
+    }
+
+    .legend-box.occupied {
+      background: #2f3542;
+      border-color: #3e4555;
+    }
+
+    /* Booking summary */
+    .summary {
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 1.5rem;
+      padding: 1.3rem 1.5rem;
+      margin-top: 0.5rem;
+      border: 1px solid rgba(255, 215, 0, 0.15);
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.95rem;
+      padding: 0.5rem 0;
+      color: #cdd6eb;
+      border-bottom: 1px dashed rgba(255, 255, 255, 0.08);
+    }
+
+    .summary-row:last-child {
+      border-bottom: none;
+    }
+
+    .summary-row.total {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #f5c542;
+      margin-top: 0.4rem;
+      padding-top: 0.8rem;
+      border-top: 1px solid rgba(245, 197, 66, 0.3);
+    }
+
+    .summary-row span:last-child {
+      font-weight: 600;
+    }
+
+    .book-btn {
+      width: 100%;
+      margin-top: 1.5rem;
+      padding: 1.1rem;
+      border: none;
+      border-radius: 3rem;
+      background: linear-gradient(145deg, #f5c542, #e0aa1e);
+      color: #0b0d14;
+      font-weight: 800;
+      font-size: 1.1rem;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      cursor: pointer;
+      transition: 0.2s ease;
+      box-shadow: 0 18px 30px -8px rgba(245, 197, 66, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .book-btn:hover {
+      transform: translateY(-3px);
+      background: linear-gradient(145deg, #ffd95c, #f5c542);
+      box-shadow: 0 25px 35px -8px #f5c542;
+    }
+
+    .book-btn i {
+      font-size: 1.2rem;
+    }
+
+    /* small responsive */
+    @media (max-width: 850px) {
+      .booking-grid {
+        grid-template-columns: 1fr;
+      }
+      .booking-card {
+        padding: 1.8rem;
+      }
+      .header h1 {
+        font-size: 1.8rem;
+      }
+    }
+
+    @media (max-width: 550px) {
+      body {
+        padding: 0.8rem;
+      }
+      .booking-card {
+        padding: 1.2rem;
+      }
+      .seat-grid {
+        gap: 0.35rem;
+      }
+      .seat {
+        font-size: 0.6rem;
+      }
+      .movie-item {
+        padding: 0.7rem;
+      }
+    }
+
+    /* extra glow for background elegance */
+    .glow {
+      position: fixed;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(245, 197, 66, 0.12) 0%, transparent 70%);
+      border-radius: 50%;
+      top: -200px;
+      right: -150px;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .glow-left {
+      position: fixed;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(80, 110, 200, 0.1) 0%, transparent 70%);
+      border-radius: 50%;
+      bottom: -250px;
+      left: -200px;
+      pointer-events: none;
+      z-index: -1;
+    }
+  </style>
+</head>
+<body>
+  <!-- decorative glow elements for background excellence -->
+  <div class="glow"></div>
+  <div class="glow-left"></div>
+
+  <main class="booking-card">
+    <!-- Header -->
+    <div class="header">
+      <h1>
+        <i class="fas fa-film"></i> CineMax
+      </h1>
+      <div class="date-badge">
+        <i class="fas fa-calendar-alt"></i> Wed, Apr 16 · 7:30 PM
+      </div>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="booking-grid">
+      <!-- LEFT COLUMN: Movie & showtime -->
+      <div class="left-panel">
+        <!-- choose movie -->
+        <div>
+          <div class="section-title">
+            <i class="fas fa-video"></i> Now showing
+          </div>
+          <div class="movie-list">
+            <div class="movie-item selected" data-movie="Dune: Part Two">
+              <div class="movie-poster"><i class="fas fa-dragon"></i></div>
+              <div class="movie-info">
+                <h3>Dune: Part Two</h3>
+                <div class="meta"><span><i class="fas fa-clock"></i> 2h 46m</span> <span><i class="fas fa-star"></i> 8.7</span></div>
+              </div>
+            </div>
+            <div class="movie-item" data-movie="Oppenheimer">
+              <div class="movie-poster"><i class="fas fa-atom"></i></div>
+              <div class="movie-info">
+                <h3>Oppenheimer</h3>
+                <div class="meta"><span><i class="fas fa-clock"></i> 3h 0m</span> <span><i class="fas fa-star"></i> 8.9</span></div>
+              </div>
+            </div>
+            <div class="movie-item" data-movie="Poor Things">
+              <div class="movie-poster"><i class="fas fa-heart"></i></div>
+              <div class="movie-info">
+                <h3>Poor Things</h3>
+                <div class="meta"><span><i class="fas fa-clock"></i> 2h 21m</span> <span><i class="fas fa-star"></i> 8.2</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- showtimes -->
+        <div>
+          <div class="section-title">
+            <i class="fas fa-clock"></i> Showtimes
+          </div>
+          <div class="showtimes">
+            <div class="time-chip active"><i class="fas fa-sun"></i> 11:30 AM</div>
+            <div class="time-chip"><i class="fas fa-cloud-sun"></i> 2:45 PM</div>
+            <div class="time-chip"><i class="fas fa-moon"></i> 6:15 PM</div>
+            <div class="time-chip"><i class="fas fa-star"></i> 9:30 PM</div>
+          </div>
+        </div>
+
+        <!-- extra info / location -->
+        <div style="margin-top: 0.5rem; color: #9aa6c1; font-size: 0.9rem; display: flex; gap: 12px;">
+          <span><i class="fas fa-map-pin" style="color: #f5c542;"></i> Grand Cinema, Hall 4</span>
+          <span><i class="fas fa-ticket-alt" style="color: #f5c542;"></i> From $12.50</span>
+        </div>
+      </div>
+
+      <!-- RIGHT COLUMN: Seat selection & booking -->
+      <div class="right-panel">
+        <div class="screen-indicator">
+          <div class="screen"></div>
+          <span>SCREEN</span>
+        </div>
+
+        <!-- Seat grid: 8 columns x 5 rows = 40 seats -->
+        <div class="seat-grid" id="seatGrid">
+          <!-- seats will be populated with JavaScript -->
+        </div>
+
+        <!-- Seat legend -->
+        <div class="legend">
+          <div class="legend-item"><div class="legend-box"></div> Available</div>
+          <div class="legend-item"><div class="legend-box selected"></div> Selected</div>
+          <div class="legend-item"><div class="legend-box occupied"></div> Occupied</div>
+        </div>
+
+        <!-- Booking summary -->
+        <div class="summary">
+          <div class="summary-row">
+            <span>Movie</span>
+            <span id="selectedMovie">Dune: Part Two</span>
+          </div>
+          <div class="summary-row">
+            <span>Showtime</span>
+            <span id="selectedTime">11:30 AM</span>
+          </div>
+          <div class="summary-row">
+            <span>Seats</span>
+            <span id="selectedSeats">None</span>
+          </div>
+          <div class="summary-row total">
+            <span>Total</span>
+            <span id="totalPrice">$0.00</span>
+          </div>
+        </div>
+
+        <!-- Book button -->
+        <button class="book-btn" id="bookBtn">
+          <i class="fas fa-ticket-alt"></i> Book tickets
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    (function() {
+      // ---------- Seat data ----------
+      const rows = 5;
+      const cols = 8;
+      const seatGrid = document.getElementById('seatGrid');
+      
+      // Occupied seats (simulate some reserved seats)
+      const occupiedSeats = new Set([
+        '1-3', '1-4', '2-6', '3-2', '3-7', '4-1', '4-8', '5-4', '5-5'
+      ]);
+
+      // store selected seats as Set of strings "row-col"
+      let selectedSeats = new Set();
+
+      // UI elements
+      const selectedMovieSpan = document.getElementById('selectedMovie');
+      const selectedTimeSpan = document.getElementById('selectedTime');
+      const selectedSeatsSpan = document.getElementById('selectedSeats');
+      const totalPriceSpan = document.getElementById('totalPrice');
+
+      // Constants
+      const SEAT_PRICE = 12.50;
+
+      // ---------- Generate seat grid ----------
+      function buildSeats() {
+        seatGrid.innerHTML = '';
+        for (let r = 1; r <= rows; r++) {
+          for (let c = 1; c <= cols; c++) {
+            const seat = document.createElement('div');
+            seat.className = 'seat';
+            const seatId = `${r}-${c}`;
+            seat.dataset.seatId = seatId;
+            
+            // check if occupied
+            if (occupiedSeats.has(seatId)) {
+              seat.classList.add('occupied');
+            } else {
+              seat.classList.add('available');
+            }
+            
+            // seat label (row + col? better show a small icon / just number)
+            // Use row letter + column number? but we can show the column number
+            // for cleaner look, we'll show the col number inside. Actually nice to show row letter.
+            const rowLetter = String.fromCharCode(64 + r); // A, B, C...
+            seat.textContent = `${rowLetter}${c}`; // e.g., A1, B3 ... but small
+            // adjust font size maybe
+            seat.style.fontSize = '0.6rem';
+            
+            // add click listener for available seats
+            if (!seat.classList.contains('occupied')) {
+              seat.addEventListener('click', (e) => {
+                e.stopPropagation();
+                toggleSeat(seat, seatId);
+              });
+            }
+            
+            seatGrid.appendChild(seat);
+          }
+        }
+      }
+
+      // Toggle seat selection
+      function toggleSeat(seatElement, seatId) {
+        if (occupiedSeats.has(seatId)) return; // extra safety
+        
+        if (selectedSeats.has(seatId)) {
+          // deselect
+          selectedSeats.delete(seatId);
+          seatElement.classList.remove('selected');
+        } else {
+          // select (maybe limit max 8 seats? not required, but good UX)
+          if (selectedSeats.size >= 8) {
+            alert('You can select up to 8 seats per booking.');
+            return;
+          }
+          selectedSeats.add(seatId);
+          seatElement.classList.add('selected');
+        }
+        
+        updateSummary();
+      }
+
+      // Update summary text & total
+      function updateSummary() {
+        // Seats display
+        if (selectedSeats.size === 0) {
+          selectedSeatsSpan.textContent = 'None';
+        } else {
+          const seatList = Array.from(selectedSeats).map(id => {
+            const [r, c] = id.split('-');
+            const rowLetter = String.fromCharCode(64 + parseInt(r));
+            return `${rowLetter}${c}`;
+          }).sort(); // sort alphabetically
+          selectedSeatsSpan.textContent = seatList.join(', ');
+        }
+        
+        // Total price
+        const total = (selectedSeats.size * SEAT_PRICE).toFixed(2);
+        totalPriceSpan.textContent = `$${total}`;
+      }
+
+      // ---------- Movie selection ----------
+      const movieItems = document.querySelectorAll('.movie-item');
+      movieItems.forEach(item => {
+        item.addEventListener('click', () => {
+          // remove selected class from all
+          movieItems.forEach(m => m.classList.remove('selected'));
+          item.classList.add('selected');
+          const movieName = item.dataset.movie || item.querySelector('.movie-info h3').textContent;
+          selectedMovieSpan.textContent = movieName;
+        });
+      });
+
+      // ---------- Showtime selection ----------
+      const timeChips = document.querySelectorAll('.time-chip');
+      timeChips.forEach(chip => {
+        chip.addEventListener('click', () => {
+          timeChips.forEach(c => c.classList.remove('active'));
+          chip.classList.add('active');
+          // extract time text (skip icon)
+          const timeText = chip.textContent.trim();
+          selectedTimeSpan.textContent = timeText;
+        });
+      });
+
+      // ---------- Book button (simulate booking) ----------
+      const bookBtn = document.getElementById('bookBtn');
+      bookBtn.addEventListener('click', () => {
+        if (selectedSeats.size === 0) {
+          alert('Please select at least one seat.');
+          return;
+        }
+        const movie = selectedMovieSpan.textContent;
+        const time = selectedTimeSpan.textContent;
+        const seatCount = selectedSeats.size;
+        const total = totalPriceSpan.textContent;
+        
+        // Friendly confirmation
+        alert(`🎬 Booking confirmed!\n\nMovie: ${movie}\nTime: ${time}\nSeats: ${selectedSeatsSpan.textContent}\nTotal: ${total}\n\nEnjoy your movie!`);
+        
+        // Optionally reset selection? We'll just keep for demo, but could clear.
+        // For better UX we might reset, but not necessary.
+      });
+
+      // initialize seat grid
+      buildSeats();
+
+      // set default time & movie from UI (already selected in HTML)
+      // ensure summary matches initially
+      // Set selected movie as per .selected class default
+      const defaultMovie = document.querySelector('.movie-item.selected');
+      if (defaultMovie) {
+        selectedMovieSpan.textContent = defaultMovie.dataset.movie || defaultMovie.querySelector('.movie-info h3').textContent;
+      }
+      const defaultTime = document.querySelector('.time-chip.active');
+      if (defaultTime) {
+        selectedTimeSpan.textContent = defaultTime.textContent.trim();
+      }
+      // seats are empty initially, so update summary to none & $0.00
+      updateSummary();
+    })();
+  </script>
+</body>
+</html>
