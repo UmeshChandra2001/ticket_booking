@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RailGo · Train Ticket Booking</title>
+  <!-- Google Font & Font Awesome -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at 25% 20%, #182a3a, #0a121c);
+      background-attachment: fixed;
+      padding: 1.5rem;
+    }
+
+    /* Main card – elegant glassmorphism with subtle blue/gold accents */
+    .train-booking-card {
+      max-width: 1250px;
+      width: 100%;
+      background: rgba(14, 22, 32, 0.82);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(120, 180, 255, 0.12);
+      box-shadow: 0 35px 65px -18px rgba(0, 0, 0, 0.95), 0 0 0 1px rgba(90, 150, 255, 0.1) inset;
+      border-radius: 2.8rem;
+      padding: 2.2rem 2.5rem;
+      color: #f0f5ff;
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2.4rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .header h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: linear-gradient(145deg, #ffffff, #b8d4ff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .header h1 i {
+      color: #6fb0ff;
+      font-size: 2.1rem;
+      filter: drop-shadow(0 0 12px rgba(111, 176, 255, 0.6));
+    }
+
+    .header .journey-badge {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(111, 176, 255, 0.35);
+      padding: 0.7rem 1.5rem;
+      border-radius: 100px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: #eef3fc;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      backdrop-filter: blur(4px);
+    }
+
+    .header .journey-badge i {
+      color: #6fb0ff;
+    }
+
+    /* Two-column layout */
+    .booking-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.15fr;
+      gap: 2rem;
+      align-items: start;
+    }
+
+    /* LEFT PANEL */
+    .left-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 1.8rem;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #bfcbe0;
+      margin-bottom: 0.9rem;
+    }
+
+    .section-title i {
+      color: #6fb0ff;
+      font-size: 1.1rem;
+    }
+
+    /* Train cards */
+    .train-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .train-item {
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 1.6rem;
+      padding: 0.9rem 1.3rem;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      backdrop-filter: blur(4px);
+    }
+
+    .train-item:hover {
+      background: rgba(255, 255, 255, 0.07);
+      border-color: rgba(111, 176, 255, 0.45);
+      transform: scale(1.005);
+    }
+
+    .train-item.selected {
+      background: rgba(111, 176, 255, 0.12);
+      border: 1px solid #6fb0ff;
+      box-shadow: 0 0 22px rgba(111, 176, 255, 0.2);
+    }
+
+    .train-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 1.2rem;
+      background: linear-gradient(145deg, #1f2f44, #14202e);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      color: #6fb0ff;
+      box-shadow: 0 10px 18px rgba(0, 0, 0, 0.5);
+    }
+
+    .train-info h3 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 0.25rem;
+    }
+
+    .train-info .meta {
+      font-size: 0.82rem;
+      color: #9aa9c4;
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .train-info .meta i {
+      font-size: 0.7rem;
+      margin-right: 5px;
+      color: #6fb0ff;
+    }
+
+    /* Class options */
+    .class-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+    }
+
+    .class-chip {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.13);
+      border-radius: 40px;
+      padding: 0.7rem 1.4rem;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: #dfe9ff;
+      transition: 0.2s;
+      cursor: pointer;
+      backdrop-filter: blur(2px);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .class-chip i {
+      color: #6fb0ff;
+      font-size: 0.85rem;
+    }
+
+    .class-chip:hover {
+      background: rgba(111, 176, 255, 0.15);
+      border-color: #6fb0ff;
+    }
+
+    .class-chip.active {
+      background: #6fb0ff;
+      border-color: #6fb0ff;
+      color: #0b121c;
+      font-weight: 700;
+      box-shadow: 0 8px 18px rgba(111, 176, 255, 0.35);
+    }
+
+    .class-chip.active i {
+      color: #0b121c;
+    }
+
+    /* Quota / passenger info */
+    .quota-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+    }
+
+    .quota-chip {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.13);
+      border-radius: 40px;
+      padding: 0.7rem 1.4rem;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: #dfe9ff;
+      transition: 0.2s;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .quota-chip i {
+      color: #6fb0ff;
+      font-size: 0.85rem;
+    }
+
+    .quota-chip:hover {
+      background: rgba(111, 176, 255, 0.15);
+      border-color: #6fb0ff;
+    }
+
+    .quota-chip.active {
+      background: #6fb0ff;
+      border-color: #6fb0ff;
+      color: #0b121c;
+      font-weight: 700;
+      box-shadow: 0 8px 18px rgba(111, 176, 255, 0.35);
+    }
+
+    .quota-chip.active i {
+      color: #0b121c;
+    }
+
+    /* RIGHT PANEL – Seats */
+    .right-panel {
+      background: rgba(8, 14, 22, 0.68);
+      border-radius: 2rem;
+      padding: 1.8rem 1.8rem;
+      border: 1px solid rgba(111, 176, 255, 0.1);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 20px 35px -8px rgba(0, 0, 0, 0.7);
+    }
+
+    /* Coach layout indicator */
+    .coach-layout {
+      text-align: center;
+      margin-bottom: 1.4rem;
+    }
+
+    .coach-label {
+      font-size: 0.8rem;
+      letter-spacing: 4px;
+      color: #9aa9c4;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    .coach-name {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #6fb0ff;
+      letter-spacing: 1px;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .coach-name i {
+      font-size: 1.3rem;
+    }
+
+    /* Seat grid – train layout: 3 + aisle + 3 (for sleeper/AC) OR 2+aisle+2 (chair car) 
+       We'll use 2 + aisle + 2 (chair car style) for simplicity, but with more rows */
+    .seat-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0.65rem;
+      justify-content: center;
+      margin: 1.6rem 0 1.5rem;
+    }
+
+    .seat {
+      aspect-ratio: 1/1;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 12px 12px 8px 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.65rem;
+      font-weight: 600;
+      color: #b7c7e0;
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      transition: 0.15s ease;
+      cursor: pointer;
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.4);
+      position: relative;
+    }
+
+    /* Aisle (middle column) */
+    .seat.aisle {
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      pointer-events: none;
+      cursor: default;
+      color: transparent;
+    }
+
+    .seat.available:hover {
+      background: rgba(111, 176, 255, 0.3);
+      border-color: #6fb0ff;
+      color: white;
+      transform: scale(1.07);
+    }
+
+    .seat.selected {
+      background: #6fb0ff;
+      border-color: #6fb0ff;
+      color: #0b121c;
+      font-weight: 800;
+      box-shadow: 0 0 16px #6fb0ff;
+    }
+
+    .seat.occupied {
+      background: #232b38;
+      border-color: #323c4d;
+      color: #5b6a82;
+      cursor: not-allowed;
+      box-shadow: none;
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    /* Ladies / senior citizen indicator */
+    .seat.ladies::after {
+      content: '\f182';
+      font-family: 'Font Awesome 6 Free';
+      font-weight: 400;
+      font-size: 0.55rem;
+      color: #ff8ab0;
+      position: absolute;
+      bottom: 2px;
+      right: 3px;
+    }
+
+    /* Legend */
+    .legend {
+      display: flex;
+      justify-content: center;
+      gap: 1.8rem;
+      font-size: 0.75rem;
+      color: #b7c7e0;
+      margin-bottom: 1.6rem;
+      flex-wrap: wrap;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .legend-box {
+      width: 16px;
+      height: 16px;
+      border-radius: 5px;
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .legend-box.selected {
+      background: #6fb0ff;
+      border-color: #6fb0ff;
+    }
+
+    .legend-box.occupied {
+      background: #232b38;
+      border-color: #323c4d;
+    }
+
+    .legend-box.ladies {
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .legend-box.ladies::after {
+      content: '\f182';
+      font-family: 'Font Awesome 6 Free';
+      font-weight: 400;
+      font-size: 0.6rem;
+      color: #ff8ab0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Summary */
+    .summary {
+      background: rgba(0, 0, 0, 0.35);
+      border-radius: 1.6rem;
+      padding: 1.4rem 1.6rem;
+      margin-top: 0.8rem;
+      border: 1px solid rgba(111, 176, 255, 0.15);
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.95rem;
+      padding: 0.55rem 0;
+      color: #cdd9f0;
+      border-bottom: 1px dashed rgba(255, 255, 255, 0.08);
+    }
+
+    .summary-row:last-child {
+      border-bottom: none;
+    }
+
+    .summary-row.total {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #6fb0ff;
+      margin-top: 0.4rem;
+      padding-top: 0.9rem;
+      border-top: 1px solid rgba(111, 176, 255, 0.3);
+    }
+
+    .summary-row span:last-child {
+      font-weight: 600;
+    }
+
+    .book-btn {
+      width: 100%;
+      margin-top: 1.6rem;
+      padding: 1.15rem;
+      border: none;
+      border-radius: 3rem;
+      background: linear-gradient(145deg, #6fb0ff, #4a8fe0);
+      color: #0b121c;
+      font-weight: 800;
+      font-size: 1.1rem;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      cursor: pointer;
+      transition: 0.2s ease;
+      box-shadow: 0 18px 30px -8px rgba(111, 176, 255, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .book-btn:hover {
+      transform: translateY(-3px);
+      background: linear-gradient(145deg, #8ac2ff, #6fb0ff);
+      box-shadow: 0 25px 35px -8px #6fb0ff;
+    }
+
+    .book-btn i {
+      font-size: 1.2rem;
+    }
+
+    /* Glow effects */
+    .glow-right {
+      position: fixed;
+      width: 550px;
+      height: 550px;
+      background: radial-gradient(circle, rgba(111, 176, 255, 0.1) 0%, transparent 70%);
+      border-radius: 50%;
+      top: -180px;
+      right: -180px;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .glow-left {
+      position: fixed;
+      width: 650px;
+      height: 650px;
+      background: radial-gradient(circle, rgba(80, 130, 220, 0.08) 0%, transparent 70%);
+      border-radius: 50%;
+      bottom: -240px;
+      left: -200px;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    /* Responsive */
+    @media (max-width: 950px) {
+      .booking-grid {
+        grid-template-columns: 1fr;
+      }
+      .train-booking-card {
+        padding: 1.8rem;
+      }
+      .header h1 {
+        font-size: 1.9rem;
+      }
+    }
+
+    @media (max-width: 550px) {
+      body {
+        padding: 0.8rem;
+      }
+      .train-booking-card {
+        padding: 1.3rem;
+      }
+      .seat-grid {
+        gap: 0.45rem;
+      }
+      .seat {
+        font-size: 0.6rem;
+      }
+      .train-item {
+        padding: 0.7rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="glow-right"></div>
+  <div class="glow-left"></div>
+
+  <main class="train-booking-card">
+    <!-- Header -->
+    <div class="header">
+      <h1>
+        <i class="fas fa-train"></i> RailGo
+      </h1>
+      <div class="journey-badge">
+        <i class="fas fa-calendar-check"></i> Wed, 16 Apr · 08:45 AM
+      </div>
+    </div>
+
+    <!-- Grid -->
+    <div class="booking-grid">
+      <!-- LEFT: Trains, class, quota -->
+      <div class="left-panel">
+        <!-- Train selection -->
+        <div>
+          <div class="section-title">
+            <i class="fas fa-route"></i> Available trains
+          </div>
+          <div class="train-list">
+            <div class="train-item selected" data-train="Rajdhani Express (12301)">
+              <div class="train-icon"><i class="fas fa-bolt"></i></div>
+              <div class="train-info">
+                <h3>Rajdhani Express</h3>
+                <div class="meta">
+                  <span><i class="fas fa-hashtag"></i> 12301</span>
+                  <span><i class="fas fa-clock"></i> 08:45 – 14:20</span>
+                  <span><i class="fas fa-chair"></i> 2A · 3A · SL</span>
+                </div>
+              </div>
+            </div>
+            <div class="train-item" data-train="Shatabdi Express (12002)">
+              <div class="train-icon"><i class="fas fa-rocket"></i></div>
+              <div class="train-info">
+                <h3>Shatabdi Express</h3>
+                <div class="meta">
+                  <span><i class="fas fa-hashtag"></i> 12002</span>
+                  <span><i class="fas fa-clock"></i> 06:00 – 11:30</span>
+                  <span><i class="fas fa-chair"></i> CC · EC</span>
+                </div>
+              </div>
+            </div>
+            <div class="train-item" data-train="Duronto Express (12213)">
+              <div class="train-icon"><i class="fas fa-moon"></i></div>
+              <div class="train-info">
+                <h3>Duronto Express</h3>
+                <div class="meta">
+                  <span><i class="fas fa-hashtag"></i> 12213</span>
+                  <span><i class="fas fa-clock"></i> 22:15 – 07:40</span>
+                  <span><i class="fas fa-bed"></i> 1A · 2A · 3A</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Class selection -->
+        <div>
+          <div class="section-title">
+            <i class="fas fa-chair"></i> Travel class
+          </div>
+          <div class="class-options">
+            <div class="class-chip active"><i class="fas fa-snowflake"></i> AC 2 Tier (2A)</div>
+            <div class="class-chip"><i class="fas fa-couch"></i> AC 3 Tier (3A)</div>
+            <div class="class-chip"><i class="fas fa-bed"></i> Sleeper (SL)</div>
+            <div class="class-chip"><i class="fas fa-chair"></i> Chair Car (CC)</div>
+          </div>
+        </div>
+
+        <!-- Quota selection -->
+        <div>
+          <div class="section-title">
+            <i class="fas fa-users"></i> Quota
+          </div>
+          <div class="quota-options">
+            <div class="quota-chip active"><i class="fas fa-globe"></i> General</div>
+            <div class="quota-chip"><i class="fas fa-female"></i> Ladies</div>
+            <div class="quota-chip"><i class="fas fa-user-clock"></i> Senior Citizen</div>
+            <div class="quota-chip"><i class="fas fa-briefcase"></i> Tatkal</div>
+          </div>
+        </div>
+
+        <!-- Extra info -->
+        <div style="margin-top: 0.4rem; color: #9aa9c4; font-size: 0.9rem; display: flex; gap: 20px; flex-wrap: wrap;">
+          <span><i class="fas fa-utensils" style="color: #6fb0ff;"></i> Meals available</span>
+          <span><i class="fas fa-wifi" style="color: #6fb0ff;"></i> Onboard WiFi</span>
+          <span><i class="fas fa-plug" style="color: #6fb0ff;"></i> Charging point</span>
+        </div>
+      </div>
+
+      <!-- RIGHT: Seat selection & booking -->
+      <div class="right-panel">
+        <div class="coach-layout">
+          <div class="coach-label">Coach position</div>
+          <div class="coach-name">
+            <i class="fas fa-train-subway"></i> B2 <i class="fas fa-train-subway"></i>
+          </div>
+        </div>
+
+        <!-- Seat grid will be populated with JS -->
+        <div class="seat-grid" id="trainSeatGrid"></div>
+
+        <!-- Legend -->
+        <div class="legend">
+          <div class="legend-item"><div class="legend-box"></div> Available</div>
+          <div class="legend-item"><div class="legend-box selected"></div> Selected</div>
+          <div class="legend-item"><div class="legend-box occupied"></div> Occupied</div>
+          <div class="legend-item"><div class="legend-box ladies"></div> Ladies</div>
+        </div>
+
+        <!-- Summary -->
+        <div class="summary">
+          <div class="summary-row">
+            <span>Train</span>
+            <span id="selectedTrain">Rajdhani Express (12301)</span>
+          </div>
+          <div class="summary-row">
+            <span>Class</span>
+            <span id="selectedClass">AC 2 Tier (2A)</span>
+          </div>
+          <div class="summary-row">
+            <span>Quota</span>
+            <span id="selectedQuota">General</span>
+          </div>
+          <div class="summary-row">
+            <span>Seats</span>
+            <span id="selectedSeats">None</span>
+          </div>
+          <div class="summary-row total">
+            <span>Total</span>
+            <span id="totalPrice">$0.00</span>
+          </div>
+        </div>
+
+        <button class="book-btn" id="bookTrainBtn">
+          <i class="fas fa-ticket-alt"></i> Book tickets
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    (function() {
+      // ---------- TRAIN SEAT CONFIGURATION ----------
+      const rows = 10;          // 10 rows of seats
+      const cols = 5;           // layout: [seat, seat, aisle, seat, seat] -> columns 0,1,3,4 are seats, 2 is aisle
+      
+      const seatGrid = document.getElementById('trainSeatGrid');
+
+      // Occupied seats (simulate) - format "row-col", col in [0,1,3,4]
+      const occupiedSeats = new Set([
+        '1-0', '1-4', '2-1', '3-3', '5-0', '5-4', '7-1', '8-3', '9-0', '10-1', '4-1', '6-3'
+      ]);
+
+      // Ladies seats (simulate) - format "row-col"
+      const ladiesSeats = new Set([
+        '2-0', '3-1', '7-4', '9-3'
+      ]);
+
+      // Selected seats set
+      let selectedSeats = new Set();
+
+      // UI elements
+      const selectedTrainSpan = document.getElementById('selectedTrain');
+      const selectedClassSpan = document.getElementById('selectedClass');
+      const selectedQuotaSpan = document.getElementById('selectedQuota');
+      const selectedSeatsSpan = document.getElementById('selectedSeats');
+      const totalPriceSpan = document.getElementById('totalPrice');
+
+      // Base price per seat (could depend on class, but for demo flat)
+      const SEAT_PRICE = 45.00;
+
+      // ---------- BUILD TRAIN SEAT GRID ----------
+      function buildTrainSeats() {
+        seatGrid.innerHTML = '';
+        for (let r = 1; r <= rows; r++) {
+          for (let c = 0; c < cols; c++) {
+            const seat = document.createElement('div');
+            seat.className = 'seat';
+            
+            // aisle column (index 2) -> empty space
+            if (c === 2) {
+              seat.classList.add('aisle');
+              seat.textContent = '';
+              seatGrid.appendChild(seat);
+              continue;
+            }
+
+            const seatId = `${r}-${c}`; // e.g., "1-0"
+            seat.dataset.seatId = seatId;
+            
+            // seat label: row letter + column number (mapping col to seat numbers)
+            const rowLetter = String.fromCharCode(64 + r);
+            let seatNum;
+            if (c === 0) seatNum = 1;
+            else if (c === 1) seatNum = 2;
+            else if (c === 3) seatNum = 3;
+            else if (c === 4) seatNum = 4;
+            else seatNum = 0;
+            
+            seat.textContent = `${rowLetter}${seatNum}`;
+            seat.style.fontSize = '0.65rem';
+            
+            // Check occupied
+            if (occupiedSeats.has(seatId)) {
+              seat.classList.add('occupied');
+            } else {
+              seat.classList.add('available');
+            }
+            
+            // Mark ladies seats
+            if (ladiesSeats.has(seatId)) {
+              seat.classList.add('ladies');
+            }
+            
+            // Add click listener for available seats
+            if (!seat.classList.contains('occupied') && !seat.classList.contains('aisle')) {
+              seat.addEventListener('click', (e) => {
+                e.stopPropagation();
+                toggleTrainSeat(seat, seatId);
+              });
+            }
+            
+            seatGrid.appendChild(seat);
+          }
+        }
+      }
+
+      // Toggle seat selection
+      function toggleTrainSeat(seatElement, seatId) {
+        if (occupiedSeats.has(seatId)) return;
+        
+        if (selectedSeats.has(seatId)) {
+          selectedSeats.delete(seatId);
+          seatElement.classList.remove('selected');
+        } else {
+          if (selectedSeats.size >= 6) {
+            alert('You can select up to 6 seats per booking.');
+            return;
+          }
+          selectedSeats.add(seatId);
+          seatElement.classList.add('selected');
+        }
+        
+        updateTrainSummary();
+      }
+
+      // Update summary
+      function updateTrainSummary() {
+        if (selectedSeats.size === 0) {
+          selectedSeatsSpan.textContent = 'None';
+        } else {
+          const seatList = Array.from(selectedSeats).map(id => {
+            const [r, c] = id.split('-').map(Number);
+            const rowLetter = String.fromCharCode(64 + r);
+            let seatNum;
+            if (c === 0) seatNum = 1;
+            else if (c === 1) seatNum = 2;
+            else if (c === 3) seatNum = 3;
+            else if (c === 4) seatNum = 4;
+            else seatNum = '?';
+            return `${rowLetter}${seatNum}`;
+          }).sort();
+          selectedSeatsSpan.textContent = seatList.join(', ');
+        }
+        
+        const total = (selectedSeats.size * SEAT_PRICE).toFixed(2);
+        totalPriceSpan.textContent = `$${total}`;
+      }
+
+      // ---------- TRAIN SELECTION ----------
+      const trainItems = document.querySelectorAll('.train-item');
+      trainItems.forEach(item => {
+        item.addEventListener('click', () => {
+          trainItems.forEach(t => t.classList.remove('selected'));
+          item.classList.add('selected');
+          const trainName = item.dataset.train || item.querySelector('.train-info h3').textContent;
+          selectedTrainSpan.textContent = trainName;
+        });
+      });
+
+      // ---------- CLASS SELECTION ----------
+      const classChips = document.querySelectorAll('.class-chip');
+      classChips.forEach(chip => {
+        chip.addEventListener('click', () => {
+          classChips.forEach(c => c.classList.remove('active'));
+          chip.classList.add('active');
+          const classText = chip.textContent.trim();
+          selectedClassSpan.textContent = classText;
+        });
+      });
+
+      // ---------- QUOTA SELECTION ----------
+      const quotaChips = document.querySelectorAll('.quota-chip');
+      quotaChips.forEach(chip => {
+        chip.addEventListener('click', () => {
+          quotaChips.forEach(c => c.classList.remove('active'));
+          chip.classList.add('active');
+          const quotaText = chip.textContent.trim();
+          selectedQuotaSpan.textContent = quotaText;
+        });
+      });
+
+      // ---------- BOOK BUTTON ----------
+      const bookBtn = document.getElementById('bookTrainBtn');
+      bookBtn.addEventListener('click', () => {
+        if (selectedSeats.size === 0) {
+          alert('Please select at least one seat.');
+          return;
+        }
+        const train = selectedTrainSpan.textContent;
+        const travelClass = selectedClassSpan.textContent;
+        const quota = selectedQuotaSpan.textContent;
+        const seatCount = selectedSeats.size;
+        const total = totalPriceSpan.textContent;
+        
+        alert(`🚆 Booking Confirmed!\n\nTrain: ${train}\nClass: ${travelClass}\nQuota: ${quota}\nSeats: ${selectedSeatsSpan.textContent}\nTotal: ${total}\n\nHappy journey!`);
+        
+        // Optional: clear selection after booking
+        // selectedSeats.clear();
+        // document.querySelectorAll('.seat.selected').forEach(s => s.classList.remove('selected'));
+        // updateTrainSummary();
+      });
+
+      // ---------- INITIALIZE ----------
+      buildTrainSeats();
+
+      // Set default train, class, quota from UI
+      const defaultTrain = document.querySelector('.train-item.selected');
+      if (defaultTrain) {
+        selectedTrainSpan.textContent = defaultTrain.dataset.train || defaultTrain.querySelector('.train-info h3').textContent;
+      }
+      const defaultClass = document.querySelector('.class-chip.active');
+      if (defaultClass) {
+        selectedClassSpan.textContent = defaultClass.textContent.trim();
+      }
+      const defaultQuota = document.querySelector('.quota-chip.active');
+      if (defaultQuota) {
+        selectedQuotaSpan.textContent = defaultQuota.textContent.trim();
+      }
+      
+      // Seats empty initially
+      updateTrainSummary();
+    })();
+  </script>
+</body>
+</html>
