@@ -1,0 +1,152 @@
+    1  yum install docker -y && systemctl start docker && systemctl enable docker
+    2  yum install git -y
+    3  git clone https://github.com/UmeshChandra2001/ticket_booking.git
+    4  sudo mkdir -p /usr/libexec/docker/cli-plugins
+    5  sudo curl -SL "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+    6  sudo chmod +x /usr/local/bin/docker-compose
+    7  sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+    8  docker-compose version
+    9  #buildx commands
+   10  mkdir -p /root/.docker/cli-plugins
+   11  ARCH=$(uname -m)
+   12  if [ "$ARCH" = "x86_64" ]; then     ARCH="amd64"; elif [ "$ARCH" = "aarch64" ]; then     ARCH="arm64"; else     echo "Unsupported architecture: $ARCH";     exit 1; fi
+   13  VERSION=$(curl -fsSL https://api.github.com/repos/docker/buildx/releases/latest \
+   14      | grep '"tag_name":' | head -n 1 | cut -d '"' -f 4)
+   15  curl -fL     "https://github.com/docker/buildx/releases/download/${VERSION}/buildx-${VERSION}.linux-${ARCH}"     -o /root/.docker/cli-plugins/docker-buildx
+   16  chmod +x /root/.docker/cli-plugins/docker-buildx
+   17  cd ticket_booking/
+   18  ll -a
+   19  vim compose.yaml
+   20  cd ticket_booking/
+   21  ll -a
+   22  docker-compose help
+   23  docker-compose build up -d
+   24  docker-compose up -d
+   25  vim compose.yaml 
+   26  docker-compose up -d
+   27  cat compose.yaml 
+   28  rm compose.yaml
+   29  vim compose.yml
+   30  docker-compose up -d
+   31  docker compose version
+   32  docker-compose version
+   33  docker buildx version
+   34  docker buildx ls
+   35  docker-compose up -d
+   36  docker buildx version
+   37  uname -m
+   38  file /root/.docker/cli-plugins/docker-buildx
+   39  /root/.docker/cli-plugins/docker-buildx: exec format error
+   40  uname -m
+   41  rm -f /root/.docker/cli-plugins/docker-buildx
+   42  find /root/.docker -name 'docker-buildx' -type f -ls
+   43  docker --version
+   44  docker compose version
+   45  docker-compose version
+   46  yum install -y docker-buildx-plugin
+   47  rm -f /root/.docker/cli-plugins/docker-buildx
+   48  mkdir -p /root/.docker/cli-plugins
+   49  curl -L https://github.com/docker/buildx/releases/latest/download/buildx-linux-amd64   -o /root/.docker/cli-plugins/docker-buildx
+   50  chmod +x /root/.docker/cli-plugins/docker-buildx
+   51  docker buildx version
+   52  chmod +x /root/.docker/cli-plugins/docker-buildx
+   53  uname -m
+   54  file /root/.docker/cli-plugins/docker-buildx
+   55  rm -f /root/.docker/cli-plugins/docker-buildx
+   56  mkdir -p /root/.docker/cli-plugins
+   57  curl -fL https://github.com/docker/buildx/releases/download/v0.28.0/buildx-v0.28.0.linux-amd64   -o /root/.docker/cli-plugins/docker-buildx
+   58  chmod +x /root/.docker/cli-plugins/docker-buildx
+   59  file /root/.docker/cli-plugins/docker-buildx
+   60  docker buildx version
+   61  docker-compose up -d
+   62  ll -a
+   63  docker images
+   64  vim compose.yml
+   65  cat compose.yml 
+   66  ll -a train/
+   67  docker-compose up -d
+   68  ll -a
+   69  cat compose.yml
+   70  docker-compose up -d
+   71  ll -a
+   72  docker-compose up -d
+   73  cd ticket_booking/
+   74  docker-compose up -d
+   75  vim compose.yml 
+   76  docker-compose up -d
+   77  mv compose.yml compose.txt
+   78  vim compose.yaml
+   79  docker-compose up -d
+   80  docker ps -a
+   81  docker stats
+   82  ll -a
+   83  cd ticket_booking/
+   84  ll -a
+   85  history
+   86  docker ps =a
+   87  docker ps -a
+   88  docker exec -d flightcont
+   89  docker exec -i flightcont bash
+   90  docker exec -it flightcont bash
+   91  docker exec -it buscont bash
+   92  docker exec -it buscont sh
+   93  docker ps -a
+   94  docker exec -it buscont basg
+   95  docker exec -it buscont bash
+   96  docker exec -it buscont sh
+   97  docker exec -it buscont bash
+   98  docker network ls
+   99  cd ticket_booking/
+  100  ll -a
+  101  rm compose.txt 
+  102  git add .
+  103  git commit -m "BUILD BASIC CONTAINER USER COMPOSE"
+  104  git push -u origin main
+  105  ll -a
+  106  docker-compose down
+  107  docker images
+  108  docker ps -a
+  109  mv compose.yaml basic_compose.yaml
+  110  ll -a
+  111  cat basic_compose.yaml 
+  112  vim compose.yaml
+  113  vim train/dockerfile
+  114  vim bus/dockerfile
+  115  vim flight/dockerfile
+  116  vim movies/dockerfile
+  117  ll -a
+  118  vim compose.yml
+  119  docker-compose up -d
+  120  docker images
+  121  docker ps -a
+  122  docker networks
+  123  docker network ls
+  124  docker volumes ls
+  125  docker volume ls
+  126  ll -a
+  127  docker-compose down
+  128  docker volume ls
+  129  docker network ls
+  130  docker ps -a
+  131  docker volume rm ticket_booking_bus_data
+  132  docker volume rm ticket_booking_flight_data
+  133  docker volume rm ticket_booking_movies_data
+  134  docker volume rm ticket_booking_train_data
+  135  docker network ls
+  136  docker volume ls
+  137  docker images 
+  138  docker rmi $(docker images)
+  139  docker images 
+  140  ll -a
+  141  cat bus/dockerfile 
+  142  vim compose.yml
+  143  ll -a
+  144  docker-compose up -d
+  145  docker images
+  146  git add .
+  147  git logs
+  148  git status
+  149  git restore --staged
+  150  git restore --staged .
+  151  git status
+  152  history
