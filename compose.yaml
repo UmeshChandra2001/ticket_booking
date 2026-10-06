@@ -1,0 +1,33 @@
+services:
+
+  movies:
+    container_name: moviescont
+    build:
+      context: ./movies
+      dockerfile: dockerfile
+    ports:
+      - "9980:80"
+
+  bus:
+    container_name: buscont
+    build:
+      context: ./bus
+      dockerfile: dockerfile
+    ports:
+      - "9981:80"
+
+  flight:
+    container_name: flightcont
+    build:
+      context: ./flight
+      dockerfile: dockerfile
+    ports:
+      - "9982:80"
+
+  train:
+    container_name: traincont
+    build:
+      context: ./train
+      dockerfile: dockerfile
+    ports:
+      - "9983:80"
